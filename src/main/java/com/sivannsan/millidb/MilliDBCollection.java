@@ -18,7 +18,6 @@ public interface MilliDBCollection extends MilliDBFile {
     MilliDBFile get(@Nonnull String name) throws MilliDBResultException;
 
     /**
-     * Creates a new MilliDBFile if the provided name does not exist.
      * @param name  the conventional name for MilliDBDocument ends with the .mll extension; empty string will be ignored the creation
      * @param type  MilliDBDocument.class or MilliDBCollection.class; MilliDBNone will be ignored the creation
      * @param force if false, it won't create if the provided name already exists; if true, it will delete the old and create a new if the type is different
