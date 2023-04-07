@@ -26,15 +26,9 @@ public interface MilliDBFile {
 
     boolean isMilliDBCollection();
 
-    /**
-     * @throws ClassCastException   when this MilliDBFile is not a MilliDBDocument
-     */
     @Nonnull
     MilliDBDocument asMilliDBDocument() throws ClassCastException;
 
-    /**
-     * @throws ClassCastException   when this MilliDBFile is not a MilliDBCollection
-     */
     @Nonnull
     MilliDBCollection asMilliDBCollection() throws ClassCastException;
 
