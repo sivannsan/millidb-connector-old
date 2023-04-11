@@ -1,7 +1,7 @@
 package com.sivannsan.millidb;
 
-import com.sivannsan.foundation.Validate;
 import com.sivannsan.foundation.annotation.Nonnull;
+import com.sivannsan.foundation.common.Require;
 import com.sivannsan.millidata.MilliData;
 import com.sivannsan.millidata.MilliMap;
 import com.sivannsan.millidata.MilliValue;
@@ -53,7 +53,7 @@ public abstract class MilliDBFilter {
         private final int level;
 
         private SuperOf(@Nonnull MilliData subMilliData, int level) {
-            this.subMilliData = Validate.nonnull(subMilliData);
+            this.subMilliData = Require.nonnull(subMilliData);
             this.level = level;
         }
 

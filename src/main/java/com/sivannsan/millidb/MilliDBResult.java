@@ -1,8 +1,8 @@
 package com.sivannsan.millidb;
 
-import com.sivannsan.foundation.Validate;
 import com.sivannsan.foundation.annotation.Nonnegative;
 import com.sivannsan.foundation.annotation.Nonnull;
+import com.sivannsan.foundation.common.Require;
 import com.sivannsan.millidata.MilliData;
 import com.sivannsan.millidata.MilliMap;
 import com.sivannsan.millidata.MilliNull;
@@ -19,15 +19,16 @@ public final class MilliDBResult {
      * @param succeed   true only if there is no obstacle with the operation
      */
     public MilliDBResult(@Nonnegative long id, boolean succeed, @Nonnull MilliData metadata) {
-        this.id = Validate.nonnegative(id);
+        this.id = Require.nonnegative(id);
         this.succeed = succeed;
-        this.metadata = Validate.nonnull(metadata);
+        this.metadata = Require.nonnull(metadata);
     }
 
     public long getID() {
         return id;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isSucceed() {
         return succeed;
     }
@@ -51,13 +52,13 @@ public final class MilliDBResult {
             try {
                 return parse(result);
             } catch (MilliDBResultException e) {
-                return Validate.nonnull(defaultValue);
+                return Require.nonnull(defaultValue);
             }
         }
 
         @Nonnull
         public static MilliDBResult parse(@Nonnull String result) throws MilliDBResultException {
-            MilliMap map = MilliData.Parser.parse(Validate.nonnull(result), new MilliMap()).asMilliMap(new MilliMap());
+            MilliMap map = MilliData.Parser.parse(Require.nonnull(result), new MilliMap()).asMilliMap(new MilliMap());
             long parsedID = map.get("id").asMilliValue(new MilliValue(-1)).asInteger64();
             if (parsedID < 0) throw new MilliDBResultException("Invalid ID for parsing!");
             boolean parsedSucceed = map.get("s").asMilliValue(new MilliValue(false)).asBoolean();
