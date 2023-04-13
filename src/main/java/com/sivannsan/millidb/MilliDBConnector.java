@@ -24,7 +24,7 @@ public final class MilliDBConnector {
      */
     public static MilliDBDatabase connect(@Nonnull String host, int port, @Nonnull String database, @Nonnull String user, @Nonnull String password) {
         try {
-            MilliDBLogger.info("Connecting to a MilliDBServer...");
+            MilliDBLogger.info("Connecting to a MilliDB database...");
             MilliDBLogger.info("- host: " + host);
             MilliDBLogger.info("- port: " + port);
             long time = System.currentTimeMillis();
@@ -35,7 +35,7 @@ public final class MilliDBConnector {
             IMilliDBDatabase db = new IMilliDBDatabase(socket, reader, writer, database, 5);
             MilliDBResult result =  db.execute(new MilliDBQuery(MilliDBQuery.Function.VERIFY, new MilliMap("user", new MilliValue(user)).append("password", new MilliValue(password)).append("database", new MilliValue(database))));
             if (!result.isSucceed()) {
-                MilliDBLogger.warning("Couldn't verify with the MilliDBServer!");
+                MilliDBLogger.warning("Couldn't verify with the MilliDB database!");
                 return null;
             }
             MilliMap map = result.getMetadata().asMilliMap(new MilliMap());
@@ -44,14 +44,14 @@ public final class MilliDBConnector {
                 db.execute(new MilliDBQuery(MilliDBQuery.Function.CLOSE, MilliNull.INSTANCE));
                 return null;
             }
-            MilliDBLogger.info("The MilliDBServer has been successfully connected in " + (System.currentTimeMillis() - time) + "ms!");
+            MilliDBLogger.info("The MilliDB database has been successfully connected in " + (System.currentTimeMillis() - time) + "ms!");
             return db;
         } catch (UnknownHostException e) {
-            MilliDBLogger.warning("UnknownHostException occurs while connecting to a database");
+            MilliDBLogger.warning("UnknownHostException occurs while connecting to a MilliDB database");
             e.printStackTrace();
             return null;
         } catch (IOException e) {
-            MilliDBLogger.warning("IOException occurs while connecting to a database");
+            MilliDBLogger.warning("IOException occurs while connecting to a MilliDB database");
             e.printStackTrace();
             return null;
         }
