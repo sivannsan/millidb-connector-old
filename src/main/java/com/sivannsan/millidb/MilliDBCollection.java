@@ -4,6 +4,7 @@ import com.sivannsan.foundation.annotation.Nonnull;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface MilliDBCollection extends MilliDBFile {
     @Nonnull
     List<MilliDBFile> list() throws MilliDBResultException;

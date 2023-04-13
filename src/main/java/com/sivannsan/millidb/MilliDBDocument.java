@@ -3,6 +3,7 @@ package com.sivannsan.millidb;
 import com.sivannsan.foundation.annotation.Nonnull;
 import com.sivannsan.millidata.MilliData;
 
+@SuppressWarnings("unused")
 public interface MilliDBDocument extends MilliDBFile {
     /**
      * @param path  delimited by dot; provided with number will be used for MilliList index first, then MilliMap key; empty string will fetch the content (the same as fetchContent method)

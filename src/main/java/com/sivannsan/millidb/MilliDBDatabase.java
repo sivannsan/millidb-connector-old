@@ -2,7 +2,10 @@ package com.sivannsan.millidb;
 
 import com.sivannsan.foundation.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public interface MilliDBDatabase {
+    void close();
+
     @Nonnull
     String getName();
 

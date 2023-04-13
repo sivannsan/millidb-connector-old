@@ -2,15 +2,19 @@ package com.sivannsan.millidb;
 
 import com.sivannsan.foundation.annotation.Nonnegative;
 import com.sivannsan.foundation.annotation.Nonnull;
-import com.sivannsan.foundation.common.Require;
+import com.sivannsan.foundation.common.Validate;
 import com.sivannsan.millidata.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public final class MilliDBConnector {
     private MilliDBConnector() {
     }
@@ -43,11 +47,11 @@ public final class MilliDBConnector {
             MilliDBLogger.info("The MilliDBServer has been successfully connected in " + (System.currentTimeMillis() - time) + "ms!");
             return db;
         } catch (UnknownHostException e) {
-            MilliDBLogger.warning("Unknown host!");
+            MilliDBLogger.warning("UnknownHostException occurs while connecting to a database");
             e.printStackTrace();
             return null;
         } catch (IOException e) {
-            MilliDBLogger.warning("I/O error!");
+            MilliDBLogger.warning("IOException occurs while connecting to a database");
             e.printStackTrace();
             return null;
         }
@@ -66,11 +70,24 @@ public final class MilliDBConnector {
         private final int maxFailures;
 
         private IMilliDBDatabase(@Nonnull Socket socket, @Nonnull BufferedReader reader, @Nonnull PrintWriter writer, @Nonnull String name, @Nonnegative int maxFailures) {
-            this.socket = Require.nonnull(socket);
-            this.reader = Require.nonnull(reader);
-            this.writer = Require.nonnull(writer);
-            this.name = Require.nonnull(name);
-            this.maxFailures = Require.nonnegative(maxFailures);
+            this.socket = Validate.nonnull(socket);
+            this.reader = Validate.nonnull(reader);
+            this.writer = Validate.nonnull(writer);
+            this.name = Validate.nonnull(name);
+            this.maxFailures = Validate.nonnegative(maxFailures);
+        }
+
+        @Override
+        public void close() {
+            execute(new MilliDBQuery(MilliDBQuery.Function.CLOSE, MilliNull.INSTANCE));
+            try {
+                writer.close();
+                reader.close();
+                socket.close();
+            } catch (IOException e) {
+                MilliDBLogger.warning("IOException occurs while closing a database");
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -99,7 +116,7 @@ public final class MilliDBConnector {
         @Override
         @Nonnull
         public MilliDBFile get(@Nonnull String path) throws MilliDBResultException {
-            MilliDBResult result = execute(new MilliDBQuery(MilliDBQuery.Function.GET, new MilliValue(name + (Require.nonnull(path).equals("") ? "" : "/" + path))));
+            MilliDBResult result = execute(new MilliDBQuery(MilliDBQuery.Function.GET, new MilliValue(name + (Validate.nonnull(path).equals("") ? "" : "/" + path))));
             if (!result.isSucceed()) throw new MilliDBResultException("Failed to execute GET from the root with a file path of '" + path + "'");
             String type = result.getMetadata().asMilliValue(new MilliValue()).asString();
             switch (type) {
@@ -161,9 +178,9 @@ public final class MilliDBConnector {
         private final String name;
 
         private IMilliDBFile(@Nonnull IMilliDBDatabase database, IMilliDBCollection parent, @Nonnull String name) {
-            this.database = Require.nonnull(database);
+            this.database = Validate.nonnull(database);
             this.parent = parent;
-            this.name = Require.nonnull(name);
+            this.name = Validate.nonnull(name);
         }
 
         @Override
@@ -286,7 +303,7 @@ public final class MilliDBConnector {
         @Override
         @Nonnull
         public MilliDBFile get(@Nonnull String name) throws MilliDBResultException {
-            if (Require.nonnull(name).equals("")) return new IMilliDBNone(database, this, name);
+            if (Validate.nonnull(name).equals("")) return new IMilliDBNone(database, this, name);
             MilliDBResult result = database.execute(new MilliDBQuery(MilliDBQuery.Function.GET, new MilliValue(getPath() + "/" + name)));
             if (!result.isSucceed()) throw new MilliDBResultException("Failed to execute GET from the file path of '" + getPath() + "' with a file name of '" + name + "'");
             String type = result.getMetadata().asMilliValue(new MilliValue()).asString();
@@ -304,9 +321,9 @@ public final class MilliDBConnector {
 
         @Override
         public void create(@Nonnull String name, @Nonnull Class<? extends MilliDBFile> type, boolean force) throws MilliDBResultException {
-            if (Require.nonnull(name).equals("")) return;
+            if (Validate.nonnull(name).equals("")) return;
             String t;
-            if (Require.nonnull(type) == MilliDBDocument.class) t = "document";
+            if (Validate.nonnull(type) == MilliDBDocument.class) t = "document";
             else if (type == MilliDBCollection.class) t = "collection";
             else return;
             MilliMap metadata = new MilliMap().append("path", new MilliValue(getPath() + "/" + name)).append("type", new MilliValue(t));

@@ -2,6 +2,7 @@ package com.sivannsan.millidb;
 
 import com.sivannsan.foundation.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public interface MilliDBFile {
     /**
      * @return  null if this MilliDBFile is root or unknown

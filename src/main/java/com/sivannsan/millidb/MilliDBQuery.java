@@ -2,12 +2,13 @@ package com.sivannsan.millidb;
 
 import com.sivannsan.foundation.annotation.Nonnegative;
 import com.sivannsan.foundation.annotation.Nonnull;
-import com.sivannsan.foundation.common.Require;
+import com.sivannsan.foundation.common.Validate;
 import com.sivannsan.millidata.MilliData;
 import com.sivannsan.millidata.MilliMap;
 import com.sivannsan.millidata.MilliNull;
 import com.sivannsan.millidata.MilliValue;
 
+@SuppressWarnings("unused")
 public final class MilliDBQuery {
     private final long id;
     @Nonnull
@@ -17,9 +18,9 @@ public final class MilliDBQuery {
     public int executes = 0;
 
     public MilliDBQuery(@Nonnegative long id, @Nonnull Function function, @Nonnull MilliData metadata) {
-        this.id = Require.nonnegative(id);
-        this.function = Require.nonnull(function);
-        this.metadata = Require.nonnull(metadata);
+        this.id = Validate.nonnegative(id);
+        this.function = Validate.nonnull(function);
+        this.metadata = Validate.nonnull(metadata);
     }
 
     public MilliDBQuery(@Nonnull Function function, @Nonnull MilliData metadata) {
@@ -51,16 +52,16 @@ public final class MilliDBQuery {
         @Nonnull
         public static MilliDBQuery parse(@Nonnull String query, @Nonnull MilliDBQuery defaultValue) {
             try {
-                return parse(Require.nonnull(query));
+                return parse(Validate.nonnull(query));
             } catch (MilliDBQueryParsedException e) {
-                return Require.nonnull(defaultValue);
+                return Validate.nonnull(defaultValue);
             }
         }
 
         @Nonnull
         public static MilliDBQuery parse(String query) throws MilliDBQueryParsedException {
             if (query == null) throw new MilliDBQueryParsedException("The provided argument is null!");
-            MilliMap map = MilliData.Parser.parse(Require.nonnull(query), new MilliMap()).asMilliMap(new MilliMap());
+            MilliMap map = MilliData.Parser.parse(Validate.nonnull(query), new MilliMap()).asMilliMap(new MilliMap());
             long parsedID = map.get("id").asMilliValue(new MilliValue(-1)).asInteger64();
             if (parsedID < 0) throw new MilliDBQueryParsedException("The parsed ID is invalid!");
             Function parsedFunction = Function.fromString(map.get("f").asMilliValue(new MilliValue()).asString());
@@ -80,39 +81,39 @@ public final class MilliDBQuery {
 
     public enum Function {
         /**
-         * <p>query metadata: user, password, database</p>
-         * <p>result metadata: succeed, reason</p>
+         * <p> query metadata: user, password, database
+         * <p> result metadata: succeed, reason
          */
         VERIFY,
         /**
-         * <p>query metadata: path, filter</p>
-         * <p>result metadata: documents, collections</p>
+         * <p> query metadata: path, filter
+         * <p> result metadata: documents, collections
          */
         LIST,
         /**
-         * <p>query metadata: path</p>
-         * <p>result metadata: type</p>
+         * <p> query metadata: path
+         * <p> result metadata: type
          */
         GET,
         /**
-         * <p>query metadata: path, type, force</p>
+         * <p> query metadata: path, type, force
          */
         CREATE,
         /**
-         * <p>query metadata: path</p>
+         * <p> query metadata: path
          */
         DELETE,
         /**
-         * <p>query metadata: path, data_path</p>
-         * <p>result metadata: data</p>
+         * <p> query metadata: path, data_path
+         * <p> result metadata: data
          */
         FETCH,
         /**
-         * <p>query metadata: path, data_path, data_value</p>
+         * <p> query metadata: path, data_path, data_value
          */
         SET,
         /**
-         * <p>close the socket at the server</p>
+         * <p> close the socket at the server
          */
         CLOSE;
 
@@ -132,7 +133,7 @@ public final class MilliDBQuery {
         }
 
         public static Function fromString(@Nonnull String string) {
-            Require.nonnull(string);
+            Validate.nonnull(string);
             for (Function f : values()) if (f.toString().equalsIgnoreCase(string)) return f;
             return null;
         }
@@ -140,7 +141,7 @@ public final class MilliDBQuery {
         @Nonnull
         public static Function fromString(@Nonnull String string, @Nonnull Function defaultValue) {
             Function f = fromString(string);
-            return f == null ? Require.nonnull(defaultValue) : f;
+            return f == null ? Validate.nonnull(defaultValue) : f;
         }
     }
 }

@@ -25,12 +25,12 @@
         <dependency>
             <groupId>com.github.sivannsan</groupId>
             <artifactId>foundation</artifactId>
-            <version>1.0.0-beta</version>
+            <version>1.0.0-beta.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.sivannsan</groupId>
             <artifactId>millidata</artifactId>
-            <version>c289d11</version>
+            <version>1.0.0-beta.1</version>
         </dependency>
     </dependencies>
 </project>

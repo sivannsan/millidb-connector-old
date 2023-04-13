@@ -1,11 +1,12 @@
 package com.sivannsan.millidb;
 
 import com.sivannsan.foundation.annotation.Nonnull;
-import com.sivannsan.foundation.common.Require;
+import com.sivannsan.foundation.common.Validate;
 import com.sivannsan.millidata.MilliData;
 import com.sivannsan.millidata.MilliMap;
 import com.sivannsan.millidata.MilliValue;
 
+@SuppressWarnings("unused")
 public abstract class MilliDBFilter {
     /**
      * <p>Used to check</p>
@@ -38,13 +39,12 @@ public abstract class MilliDBFilter {
         }
 
         public static MilliDBFilter parse(@Nonnull MilliMap filter) {
-            if (!filter.get("_t").isMilliValue()) return null;
-            switch (filter.get("_t").asMilliValue().asString()) {
-                case "so":
-                    return superOf(filter.get("s"), filter.get("l").asMilliValue(new MilliValue(0)).asInteger32());
-                default:
-                    return null;
+            String type = filter.get("_t").asMilliValue(new MilliValue()).asString();
+            if (type.equals("")) return null;
+            if (type.equals("so")) {
+                return superOf(filter.get("s"), filter.get("l").asMilliValue(new MilliValue(0)).asInteger32());
             }
+            return null;
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class MilliDBFilter {
         private final int level;
 
         private SuperOf(@Nonnull MilliData subMilliData, int level) {
-            this.subMilliData = Require.nonnull(subMilliData);
+            this.subMilliData = Validate.nonnull(subMilliData);
             this.level = level;
         }
 
